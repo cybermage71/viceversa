@@ -37,8 +37,8 @@ llm_clients:
     base_url: "http://localhost:8001/v1"
     api_key: "local"
     vllm:
-      model: "magicworld7/Qwen-3.6-27B-Wolf-it3"
-      revision: "5e55abb3d4dde3e79b30ce7a535dbc5d29c12e73"
+      model: "magicworld7/qwen36-27b-it0-fp8"
+      revision: "45e8433923d9c62af45462e2f4d7083b89c3931b"
       gpu_ids: "0"
       tensor_parallel_size: 1
       data_parallel_size: 1
@@ -72,7 +72,7 @@ embedder:
 actors:
   planner:
     client: "coder-instance"
-    model: "magicworld7/Qwen-3.6-27B-Wolf-it3"
+    model: "magicworld7/qwen36-27b-it0-fp8"
     workers: 256
     queue_size: 128
     max_tokens: 32768
@@ -90,7 +90,7 @@ actors:
       allow_fallbacks: true
   coder:
     client: "coder-instance"
-    model: "magicworld7/Qwen-3.6-27B-Wolf-it3"
+    model: "magicworld7/qwen36-27b-it0-fp8"
     workers: 48
     queue_size: 64
     max_tokens: 24576
