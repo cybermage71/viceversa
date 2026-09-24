@@ -9,7 +9,7 @@ pipeline:
   use_planner: false
   render_from_object: true
   refinement_enabled: false
-  seed_offset: 4300001
+  seed_offset: 4800001
   # Warm-up coder throughput probe: 48 text-only code requests x 512 tokens, aggregate output tok/s.
   # min_tps 0 = measure and log only. CALIBRATE before enabling: run one healthy 4xH200 pod, read
   # "[Coder probe] ... tok/s" from pipeline.log, set min_tps to ~0.8x that value.
@@ -22,7 +22,7 @@ pipeline:
 preflight:
   min_tflops: 30
   min_stream48_gbps: 0
-  min_power_limit_w: 0
+  min_power_limit_w: 700
 
 benchmark: true
 warmup: true
@@ -37,11 +37,11 @@ llm_clients:
     base_url: "http://localhost:8001/v1"
     api_key: "local"
     vllm:
-      model: "magicworld7/qwen36-27b-it0-fp8"
-      revision: "45e8433923d9c62af45462e2f4d7083b89c3931b"
-      gpu_ids: "0"
+      model: "magicworld7/Qwen-3.6-27B-Sable"
+      revision: "f5d3cb4eaa35974654f2f923829e30d50f9f0d2e"
+      gpu_ids: "0,1"
       tensor_parallel_size: 1
-      data_parallel_size: 1
+      data_parallel_size: 2
       vllm_bin: "/opt/vllm-coder-env/bin/vllm"
       gpu_memory_utilization: 0.9
       max_model_len: 81920
@@ -54,9 +54,9 @@ llm_clients:
     vllm:
       model: "zai-org/GLM-4.6V-Flash"
       revision: "411bb4d77144a3f03accbf4b780f5acb8b7cde4e" 
-      gpu_ids: "1,2,3"
+      gpu_ids: "2,3"
       tensor_parallel_size: 1
-      data_parallel_size: 3
+      data_parallel_size: 2
       gpu_memory_utilization: 0.9
       max_model_len: 81920
       max_num_seqs: 64
@@ -66,13 +66,13 @@ llm_clients:
       reasoning_parser: null
 
 embedder:
-  model_id: "computer-vision-ai-lab/dinov3-vits16-pretrain-lvd1689m"
-  revision: "e2b5191960331471bf2734d372e6a7151a6079c5"
+  model_id: "Tooony133/dinov3-vits16-pretrain-lvd1689m"
+  revision: "fc6921f7a0b44d5b33ab4482cfed5443db6ccd81"
 
 actors:
   planner:
     client: "coder-instance"
-    model: "magicworld7/qwen36-27b-it0-fp8"
+    model: "magicworld7/Qwen-3.6-27B-Sable"
     workers: 256
     queue_size: 128
     max_tokens: 32768
@@ -90,21 +90,21 @@ actors:
       allow_fallbacks: true
   coder:
     client: "coder-instance"
-    model: "magicworld7/qwen36-27b-it0-fp8"
-    workers: 48
+    model: "magicworld7/Qwen-3.6-27B-Sable"
+    workers: 96
     queue_size: 64
     max_tokens: 24576
-    temperature: 0.7
+    temperature: 0.8
     top_p: 0.95
-    top_k: 20
+    top_k: 30
     min_p: 0.0
-    presence_penalty: 0.0
+    presence_penalty: 0.3
     repetition_penalty: 1.0
     seed: 42
     enable_thinking: false
     multimodal: true
-    ensemble_size: 20
-    ensemble_temperature: 0.7
+    ensemble_size: 64
+    ensemble_temperature: 0.8
     providers:
       order: []
       allow_fallbacks: true
@@ -138,6 +138,7 @@ actors:
     max_tokens: 8192
     temperature: 0.0
     seed: 42
+    max_stage: 3
     providers:
       order: []
       allow_fallbacks: true
